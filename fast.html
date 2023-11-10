@@ -1,11 +1,15 @@
-<textarea id="t"></textarea>
+<script src="./jquery.js"></script>
+<textarea id="t" style="width: 100%; height: 100%;"></textarea>
 <script>
     data = []
-for (var q = 0; q < 10; q++) {
-    for (var e = 0; e < 10; e++) {
-var a = '"'+q+"+"+e+'"'
-data.push(a)
+    for (let q = 0; q < 19; q++) {
+        for (let e = 0; e < 10; e++) {
+            let a = '"' + q + "-" + e + '"'
+            console.log(a.split('-')[0])
+            if (parseFloat(a.split('-')[0].split('"')[1]) - parseFloat(a.split('-')[1].split('"')[0]) >= 0) {
+                data.push(a)
+            }
+        }
     }
-}
-document.getElementById('t').value = data
+    document.getElementById('t').value = data
 </script>
