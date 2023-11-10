@@ -1,0 +1,17 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$.ajax({
+   url: '/users/test',
+   type: 'POST',
+   contentType: 'application/json',
+   headers: {
+      'Authorization': localStorage.getItem('user1')
+   },
+   success: function (result) {
+      console.log(result)
+   },
+   error: function (error) {
+
+   }
+});
+</script>

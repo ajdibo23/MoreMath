@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<style>
+body {
+    background-color: #f1f1f1;
+}
+
+h1,h6 {
+  color: #FFFFFF
+}
+
+#newmessage {
+    height: 40px;
+    width: 1500px;
+    background-color: #494949;
+    color: #FFFFFF;
+}
+
+input::placeholder{
+  color: #FFFFFF;
+}
+
+#time {
+    color: #FFFFFF;
+    font-size: 1px;
+}
+
+.text {
+ color: #FFFFFF
+}
+
+#newname,#newpass,#newpass1,#newname1,#email {
+    height: 40px;
+    width: 500px;
+    background-color: #494949;
+    color: #FFFFFF;
+
+}
+
+input::placeholder{
+  color: #FFFFFF;
+}
+
+.time {
+    color: #FFFFFF
+}
+
+.text {
+ color: #FFFFFF
+}
+
+.container_row{
+  display: flex;
+}
+
+
+</style>
+
+<body>
+    <br>
+    <center>
+    <div style="border: solid #000; width: 80%; height: auto; border-radius: 15px;">
+    <a id="mainlogin">
+    <h1 style="color: #000; font-size: 75px; font-weight: bold; font-family: Arial, Helvetica, sans-serif;" id="name1">MoreMath</h1>
+    <h6 style="color: #000; font-size: 30px" id="name2" >Create New Account</h6>
+    <br>
+<input id="newname" placeholder="New Username">
+<br>
+<br>
+<br>
+<input type="password" id="newpass" placeholder="New Password">
+<br>
+<br>
+<br>
+<input type="email" id="email" placeholder="Backup Email">
+<br>
+<br>
+<button id="create" style="font-size:30px;" onclick="createCookie();">Create New Account</button>
+<br>
+<br>
+</a>
+</center>
+</body>
+
+
+
+<script>
+function createCookie() {
+    var name2 = document.getElementById('newname').value;
+    var pw2 = document.getElementById('newpass').value;
+    var email2 = document.getElementById('email').value;
+    var email = email2
+    var pw = pw2 
+    var name = name2
+  var xhr = new XMLHttpRequest();
+xhr.open("POST", '/users/makenewaccount', true);
+xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+xhr.onreadystatechange = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+    if (xhr.responseText.includes('{"success":true')) {
+        console.log(xhr.responseText)
+        var token = xhr.responseText.split('{"success":true,"token":"')[1]
+        token = token.split('"}')[0]
+        if (localStorage.getItem('user1')) {
+        localStorage.setItem('user2', token);
+        window.location.href = "/";
+      if (localStorage.getItem('user2')) {
+        localStorage.setItem('user3', token);
+        window.location.href = "/";
+        if (localStorage.getItem('user3')) {
+            localStorage.setItem('user4', token);
+            window.location.href = "/";
+          if (localStorage.getItem('user4')) {
+            localStorage.setItem('user5', token);
+            window.location.href = "/";
+            if (localStorage.getItem('user5')) {
+            alert('Only 5 accounts can be used at once.')
+            }
+          }
+        }
+      }
+    } else {
+        localStorage.setItem('user1', token);
+        window.location.href = "/";
+    }
+    } else if (xhr.responseText == 'namedupe') {
+      alert('Please use another name.')
+    } else if (xhr.responseText == 'failed') {
+alert("Make sure you added a name and password")
+    } else if (xhr.responseText == 'false') {
+alert("Make sure you added a name and password")
+    }
+}}
+xhr.send("name="+name+"&password="+pw+"&email="+email+"");
+}
+</script>
+
+
+</html>
