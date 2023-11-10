@@ -1,0 +1,219 @@
+<script src="/jquery.js"></script>
+<style>
+    body {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 90%;
+        height: auto;
+        text-align: center;
+        font-size: 25px;
+        border: solid #000;
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.521);
+    }
+</style>
+<center>
+    <div style="width: 80%; border: solid #000; height: 110%;">
+        <h1 style="font-size: 100px; margin-top: -10px;">MoreMath</h1>
+        <hr style="margin-top: -60px;">
+        <h2 style="font-size: 60px; margin-top: 0px;">Congrats on completing this session!</h2>
+        <h2 style="font-size: 50px; margin-top: 0px;" id="asked">You got 0% of the questions asked correct.</h2>
+        <h2 style="font-size: 50px; margin-top: 0px;" id="total">Total time spent: 2 minutes.</h2>
+        <h2 style="font-size: 50px; margin-top: 0px;" id="avg">That's an average of
+            <%=(Math.floor(user.reports[user.reports.length-1].avgtime) / 1000)%> per question.
+        </h2>
+        <h2 style="font-size: 50px; margin-top: 0px;" id="p">Total questions Completed: 0/100, 0%</h2>
+        <br>
+        <table id="table">
+            <%let q=0;%>
+                <%for (let c=0; c < 10; c++) {%>
+                    <% let l=["white", "white" , "white" , "white" , "white" , "white" , "white" , "white" , "white"
+                        , "white" ]%>
+                        <% for (let cc=0; cc < 10; cc++) {%>
+                            <% if (user.reports[user.reports.length-1].wrong.includes(user.progress[q + cc])) {%>
+                                <% l[q + cc]="red" %>
+                                    <% } else if (user.reports[user.reports.length-1].completed.includes(user.progress[q + cc])) {%>
+                                        <% l[q + cc]="lime" %>
+                                            <% }%>
+                                                <% }%>
+                                                    <tr>
+                                                        <th style="background-color: '<%l[q]%>'">
+                                                            <%user.progress[q]%>
+                                                        </th>
+                                                        <th style="background-color: '<%l[q + 1]%>'">
+                                                            <%user.progress[q + 1]%>
+                                                        </th>
+                                                        <th style="background-color: '<%l[q + 2]%>'">
+                                                            <%user.progress[q + 2]%>
+                                                        </th>
+                                                        <th style="background-color: '<%l[q + 3]%>'">
+                                                            <%user.progress[q + 3]%>
+                                                        </th>
+                                                        <th style="background-color: '<%l[q + 4]%>'">
+                                                            <%user.progress[q + 4]%>
+                                                        </th>
+                                                        <th style="background-color: '<%l[q + 5]%>'">
+                                                            <%user.progress[q + 5]%>
+                                                        </th>
+                                                        <th style="background-color: '<%l[q + 6]%>'">
+                                                            <%user.progress[q + 6]%>
+                                                        </th>
+                                                        <th style="background-color: '<%l[q + 7]%>'">
+                                                            <%user.progress[q + 7]%>
+                                                        </th>
+                                                        <th style="background-color: '<%l[q + 8]%>'">
+                                                            <%user.progress[q + 8]%>
+                                                        </th>
+                                                        <th style="background-color: '<%l[q + 9]%>'">
+                                                            <%user.progress[q + 9]%>
+                                                        </th>
+                                                    <tr>
+                                                        <%q +=10 %>
+                                                            <%}%>
+                                                                <% for (let c=0; c < user.progress.length; c++) {%>
+                                                                    <% if (user.completed.includes(user.progress[c])) {
+                                                                        } else {%>
+                                                                        <% needsToShow.push(user.progress[c])%>
+                                                                            <% }%>
+                                                                                <% }%>
+        </table>
+    </div>
+    <br>
+    <table id="table2"></table>
+</center>
+<script>
+    let needsToShow = []
+    let type = ""
+    let done = []
+    let params = new URLSearchParams(document.location.search.substring(1));
+    let user = params.get("user");
+    $.ajax({
+        url: '/users/info',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: {
+            'Authorization': localStorage.getItem('user' + user + '')
+        },
+        success: function (data) {
+            type = data.math
+            if (data.report.time > 60) {
+                //document.getElementById('total').innerHTML = "Total time spent: " + data.report.time+" Seconds"
+            } else {
+                document.getElementById('total').innerHTML = "Total time spent: " + data.report.time + " Seconds"
+            }
+            document.getElementById('avg').innerHTML = "That's " + (Math.floor(data.report.avgtime) / 1000) + " seconds, per question on average."
+
+            if (type == "÷") {
+
+            } else {
+                let q = 0;
+                for (let c = 0; c < 10; c++) {
+                    let l = ["white", "white", "white", "white", "white", "white", "white", "white", "white", "white"]
+                    for (let cc = 0; cc < 10; cc++) {
+                        if (data.report.wrong.includes(data.progress[q + cc])) {
+                            l[q + cc] = "red"
+                        } else if (data.report.completed.includes(data.progress[q + cc])) {
+                            l[q + cc] = "lime"
+                        }
+                    }
+                    let add = `<tr>`
+                    add += (`
+      <th style="background-color: ${l[q]}">${data.progress[q]}</th>
+      <th style="background-color: ${l[q + 1]}">${data.progress[q + 1]}</th>
+      <th style="background-color: ${l[q + 2]}">${data.progress[q + 2]}</th>
+      <th style="background-color: ${l[q + 3]}">${data.progress[q + 3]}</th>
+      <th style="background-color: ${l[q + 4]}">${data.progress[q + 4]}</th>
+      <th style="background-color: ${l[q + 5]}">${data.progress[q + 5]}</th>
+      <th style="background-color: ${l[q + 6]}">${data.progress[q + 6]}</th>
+      <th style="background-color: ${l[q + 7]}">${data.progress[q + 7]}</th>
+      <th style="background-color: ${l[q + 8]}">${data.progress[q + 8]}</th>
+      <th style="background-color: ${l[q + 9]}">${data.progress[q + 9]}</th>`)
+                    add += (`</tr>`)
+                    $('#table').append(add)
+                    q += 10
+                }
+                for (let c = 0; c < data.progress.length; c++) {
+                    if (data.completed.includes(data.progress[c])) { } else {
+                        needsToShow.push(data.progress[c])
+                    }
+                }
+            }
+
+
+            if (type == "÷") {
+                let q = 0;
+                for (let c = 0; c < 9; c++) {
+                    let l = ["white", "white", "white", "white", "white", "white", "white", "white", "white", "white"]
+                    for (let cc = 0; cc < 10; cc++) {
+                        if (needsToShow.includes(data.progress[q + cc])) {
+                            l[q + cc] = "red"
+                        } else {
+                            l[q + cc] = "lime"
+                        }
+                    }
+                    let add = `<tr>`
+                    add += (`
+                    <th style="background-color: ${l[q]}">${data.progress[q]}</th>
+      <th style="background-color: ${l[q + 1]}">${data.progress[q + 1]}</th>
+      <th style="background-color: ${l[q + 2]}">${data.progress[q + 2]}</th>
+      <th style="background-color: ${l[q + 3]}">${data.progress[q + 3]}</th>
+      <th style="background-color: ${l[q + 4]}">${data.progress[q + 4]}</th>
+      <th style="background-color: ${l[q + 5]}">${data.progress[q + 5]}</th>
+      <th style="background-color: ${l[q + 6]}">${data.progress[q + 6]}</th>
+      <th style="background-color: ${l[q + 7]}">${data.progress[q + 7]}</th>
+      <th style="background-color: ${l[q + 8]}">${data.progress[q + 8]}</th>`)
+                    add += (`</tr>`)
+                    $('#table2').append(add)
+                    q += 10
+                }
+            } else {
+                let q = 0;
+                for (let c = 0; c < 10; c++) {
+                    let l = ["white", "white", "white", "white", "white", "white", "white", "white", "white", "white"]
+                    for (let cc = 0; cc < 10; cc++) {
+                        if (needsToShow.includes(data.progress[q + cc])) {
+                            l[q + cc] = "red"
+                        } else {
+                            l[q + cc] = "lime"
+                        }
+                    }
+                    let add = `<tr>`
+                    add += (`
+      <th style="background-color: ${l[q]}">${data.progress[q]}</th>
+      <th style="background-color: ${l[q + 1]}">${data.progress[q + 1]}</th>
+      <th style="background-color: ${l[q + 2]}">${data.progress[q + 2]}</th>
+      <th style="background-color: ${l[q + 3]}">${data.progress[q + 3]}</th>
+      <th style="background-color: ${l[q + 4]}">${data.progress[q + 4]}</th>
+      <th style="background-color: ${l[q + 5]}">${data.progress[q + 5]}</th>
+      <th style="background-color: ${l[q + 6]}">${data.progress[q + 6]}</th>
+      <th style="background-color: ${l[q + 7]}">${data.progress[q + 7]}</th>
+      <th style="background-color: ${l[q + 8]}">${data.progress[q + 8]}</th>
+      <th style="background-color: ${l[q + 9]}">${data.progress[q + 9]}</th>`)
+                    add += (`</tr>`)
+                    $('#table2').append(add)
+                    q += 10
+                }
+            }
+            document.getElementById('p').innerHTML = `Total questions completed: ${100 - needsToShow.length}/100.`
+            umm = parseFloat(data.report.completed.length) + parseFloat(data.report.wrong.length)
+            umm = parseFloat(data.report.completed.length) / parseFloat(umm)
+            umm = parseFloat(umm) * 100
+            document.getElementById('asked').innerHTML = `You answered ${Math.floor(umm.toFixed(3))}% of the questions asked correctly.`
+        },
+        error: function (error) {
+        }
+    });
+</script>

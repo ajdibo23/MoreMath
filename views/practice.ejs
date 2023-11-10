@@ -1,0 +1,418 @@
+<script src="/jquery.js"></script>
+<style>
+    body {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        height: 75%;
+        text-align: center;
+        font-size: 25px;
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.521);
+    }
+
+    .loader {
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 750ms linear infinite;
+        animation: spin 750ms linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+<div id="body" style="display: grid; grid-template-columns: repeat(2, 1fr); height: 100%; width: 100%;">
+    <div class="user">
+        <table id="table">
+            <%needsToShow=[]%>
+                <% for (let c=0; c < user.progress.length; c++) {%>
+                    <% if (user.completed.includes(user.progress[c])) { } else {%>
+                        <% needsToShow.push(user.progress[c])%>
+                            <% }%>
+                                <% }%>
+                                    <%let q=0; %>
+                                        <%for (let c=0; c < 10; c++) { %>
+                                            <%let l=["white", "white" , "white" , "white" , "white" , "white" , "white"
+                                                , "white" , "white" , "white" ] %>
+                                                <%for (let cc=0; cc < 10; cc++) { %>
+                                                    <% if (needsToShow.includes(user.progress[q + cc])) { %>
+                                                        <% l[q + cc]="red" %>
+                                                            <% } else { %>
+                                                                <% l[q + cc]="lime" %>
+                                                                    <% } %>
+                                                                        <% } %>
+                                                                            <tr>
+                                                                                <th
+                                                                                    style="background-color: '<%=l[q]%>'">
+                                                                                    <%=user.progress[q]%>
+                                                                                </th>
+                                                                                <th
+                                                                                    style="background-color: '<%=l[q + 1]%>'">
+                                                                                    <%=user.progress[q + 1]%>
+                                                                                </th>
+                                                                                <th
+                                                                                    style="background-color: '<%=l[q + 2]%>'">
+                                                                                    <%=user.progress[q + 2]%>
+                                                                                </th>
+                                                                                <th
+                                                                                    style="background-color: '<%=l[q + 3]%>'">
+                                                                                    <%=user.progress[q + 3]%>
+                                                                                </th>
+                                                                                <th
+                                                                                    style="background-color: '<%=l[q + 4]%>'">
+                                                                                    <%=user.progress[q + 4]%>
+                                                                                </th>
+                                                                                <th
+                                                                                    style="background-color: '<%=l[q + 5]%>'">
+                                                                                    <%=user.progress[q + 5]%>
+                                                                                </th>
+                                                                                <th
+                                                                                    style="background-color: '<%=l[q + 6]%>'">
+                                                                                    <%=user.progress[q + 6]%>
+                                                                                </th>
+                                                                                <th
+                                                                                    style="background-color: '<%=l[q + 7]%>'">
+                                                                                    <%=user.progress[q + 7]%>
+                                                                                </th>
+                                                                                <th
+                                                                                    style="background-color: '<%=l[q + 8]%>'">
+                                                                                    <%=user.progress[q + 8]%>
+                                                                                </th>
+                                                                                <th
+                                                                                    style="background-color: '<%=l[q + 9]%>'">
+                                                                                    <%=user.progress[q + 9]%>
+                                                                                </th>
+                                                                            </tr>
+                                                                            <%q +=10 %>
+                                                                                <% } %>
+
+        </table>
+    </div>
+    <div class="user" style="border: solid #000;">
+        <h2 id="welcome"
+            style="margin-top: -5px; text-align: center; font-size: 75px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+            Welcome Back!</h2>
+        <%let progress=user.progress.length - needsToShow.length%>
+            <h2 id="left" style="font-size: 40px; text-align: center; margin-top: -40px;">You
+                have <%=needsToShow.length%> questions left.</h2>
+            <h2 id="p" style="font-size: 40px; text-align: center;">That's <%=(progress / 100) * 100%>% done, only
+                    <%=Math.round((100 * needsToShow.length) / 100)%>% left!
+            </h2>
+            <br>
+            <hr>
+            <center>
+                <h2 style="font-size: 50px; margin-top: -5px;">Ready to start?</h2>
+                <button onclick="go()" style="font-size: 100px; margin-top: -15px;">Start!</button>
+            </center>
+            <hr>
+    </div>
+</div>
+<script>
+    let needsToShow = ['<%=needsToShow%>'][0].split(',')
+    let progress = ['<%=progress%>'][0]
+    let type = ""
+    if (needsToShow[0].includes("+")) {
+        type = "+"
+    } else if (needsToShow[0].includes("-")) {
+        type = "-"
+    } else if (needsToShow[0].includes("x")) {
+        type = "x"
+    } else if (needsToShow[0].includes("÷")) {
+        type = "÷"
+    }
+    let done = []
+    let time = 0;
+    let times = []
+    let currentTime = 0
+    let wrong = []
+    let right = []
+    setInterval(function () {
+        currentTime++
+    })
+    let params = new URLSearchParams(document.location.search.substring(1));
+    let user = params.get("user");
+
+    function go() {
+        document.getElementById('body').innerHTML = ""
+        document.getElementById('body').style = ""
+        let loader = `
+      <center>
+<div class="loader"></div>
+</center>
+`
+        $('#body').append(loader)
+        setTimeout(function () {
+            document.getElementById('body').innerHTML = ""
+            fetch('/math/start', { method: 'post' }).then(function (response) {
+                return response.text();
+            }).then(function (data) {
+                if (data == "success") {
+                    let current = needsToShow[Math.floor(Math.random() * needsToShow.length)];
+                    needsToShow = needsToShow.filter(function (e) { return e !== current })
+                    let top = ""
+                    let bottom = ""
+                    if (type == "+") {
+                        top = current.split('+')[0]
+                        bottom = current.split('+')[1]
+                    } else if (type == "-") {
+                        top = current.split('-')[0]
+                        bottom = current.split('-')[1]
+                    } else if (type == "x") {
+                        top = current.split('x')[0]
+                        bottom = current.split('x')[1]
+                    } else if (type == "÷") {
+                        top = current.split('÷')[0]
+                        bottom = current.split('÷')[1]
+                    }
+                    let math = `
+   <center>
+    <div style="width: 80%; border: solid #000; height: 90%;">
+      <h1 style="font-size: 100px; margin-top: -10px;">MoreMath</h1>
+      <hr style="margin-top: -60px;">
+      <h2 id="top" style="font-size: 120px; margin-top: 0px;">${top}</h2>
+      <h2 id="bottom" style="font-size: 120px; margin-top: -80px;">${bottom}</h2>
+      <h2 style="font-size: 120px; margin-top: -230px; margin-left: -225px;">${type}</h2>
+      <hr style="color: #000; width: 30%; size: 50px; margin-top: -100px;">
+      <h1 id="answer" style="font-size: 125px; margin-top: -15px;"></h1>
+      <hr style="margin-top: -60px;">
+      <h1 id="ans" style="font-size: 50px;"></h1>
+      <h3 style="font-size: 50px;" id="stats">You have ${needsToShow.length} problem(s) left.</h3>
+      <h3 style="font-size: 50px;" id="time">You have ${time} seconds left.</h3>
+      </div>
+      </center>
+   `
+                    $('#body').append(math)
+                    setInterval(mins2, 1000)
+                }
+            })
+        }, 750)
+
+        let keys = ""
+        function checkAnswer() {
+            let bottom = parseFloat(document.getElementById('bottom').innerHTML)
+            let top = parseFloat(document.getElementById('top').innerHTML)
+            document.getElementById('answer').innerHTML = keys
+            let answer = ""
+            if (type == '+') {
+                answer = top + bottom
+            }
+            else if (type == '-') {
+                answer = top - bottom
+            }
+            else if (type == 'x') {
+                answer = top * bottom
+            }
+            else if (type == '÷') {
+                answer = top / bottom
+            }
+            if (answer.toString().length <= keys.length) {
+                if (parseFloat(keys) == answer) {
+                    update('correct')
+                    keys = ""
+                    done.push(top + type + bottom)
+                    right.push(top + type + bottom)
+                } else {
+                    update('incorrect')
+                    keys = ""
+                    wrong.push(top + type + bottom)
+                }
+            }
+        }
+
+        function update(stats) {
+            if (stats == 'correct') {
+                document.getElementById('ans').style.color = "green"
+                document.getElementById('ans').innerHTML = "Correct!"
+            } else {
+                document.getElementById('ans').style.color = "red"
+                document.getElementById('ans').innerHTML = "Incorrect."
+            }
+            document.getElementById('stats').innerHTML = `You have ${needsToShow.length} problem(s) left.`
+            times.push(currentTime)
+            currentTime = 0;
+            setTimeout(function () {
+                if (needsToShow.length <= 0) {
+                    const average = (array) => array.reduce((a, b) => a + b) / array.length;
+                    fetch('/math/update', {
+                        method: 'post',
+                        headers: new Headers({
+                            'Authorization': localStorage.getItem('user' + user + ''),
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }),
+                        body: "wrong=" + wrong + "&right=" + right + "&avgTime=" + average(times) + ""
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.error == false) {
+                                window.location.href = "/complete?user=" + user + ""
+                            }
+                        });
+                } else {
+                    let current = needsToShow[Math.floor(Math.random() * needsToShow.length)];
+                    let top = ""
+                    let bottom = ""
+                    if (type == "+") {
+                        top = current.split('+')[0]
+                        bottom = current.split('+')[1]
+                    } else if (type == "-") {
+                        top = current.split('-')[0]
+                        bottom = current.split('-')[1]
+                    } else if (type == "x") {
+                        top = current.split('x')[0]
+                        bottom = current.split('x')[1]
+                    } else if (type == "÷") {
+                        top = current.split('÷')[0]
+                        bottom = current.split('÷')[1]
+                    }
+                    document.getElementById('top').innerHTML = top
+                    document.getElementById('bottom').innerHTML = bottom
+                    document.getElementById('answer').innerHTML = ""
+                    needsToShow = needsToShow.filter(function (e) { return e !== current })
+                }
+            }, 100)
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.keyCode == 48) {
+                keys += "0"
+                checkAnswer()
+            }
+            else if (event.keyCode == 49) {
+                keys += "1"
+                checkAnswer()
+            }
+            else if (event.keyCode == 50) {
+                keys += "2"
+                checkAnswer()
+            }
+            else if (event.keyCode == 51) {
+                keys += "3"
+                checkAnswer()
+            }
+            else if (event.keyCode == 52) {
+                keys += "4"
+                checkAnswer()
+            }
+            else if (event.keyCode == 53) {
+                keys += "5"
+                checkAnswer()
+            }
+            else if (event.keyCode == 54) {
+                keys += "6"
+                checkAnswer()
+            }
+            else if (event.keyCode == 55) {
+                keys += "7"
+                checkAnswer()
+            }
+            else if (event.keyCode == 56) {
+                keys += "8"
+                checkAnswer()
+            }
+            else if (event.keyCode == 57) {
+                keys += "9"
+                checkAnswer()
+            }
+            else if (event.keyCode == 189) {
+                keys += "-"
+                checkAnswer()
+            }
+            else if (event.keyCode == 8) {
+                keys = ""
+                checkAnswer()
+            }
+        });
+    }
+    let totalTimeThing = 0;
+    function mins2() {
+        totalTimeThing++;
+        time = totalTimeThing
+        document.getElementById('time').innerHTML = `You have ${120 - time} seconds left.`
+        const average = (array) => array.reduce((a, b) => a + b) / array.length;
+        //120 lol
+        if (totalTimeThing == 20) {
+            fetch('/math/update', {
+                method: 'post',
+                headers: new Headers({
+                    'Authorization': localStorage.getItem('user' + user + ''),
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }),
+                body: "wrong=" + wrong + "&right=" + right + "&avgTime=" + average(times) + ""
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.error == false) {
+                        window.location.href = "/complete"
+                    }
+                });
+        }
+    }
+
+    function beatProgram() {
+        document.getElementById('body').innerHTML = ""
+        document.getElementById('body').style = ""
+        let loader = `
+      <center>
+<div class="loader"></div>
+</center>
+`
+        $('#body').append(loader)
+
+        setTimeout(function () {
+            document.getElementById('body').innerHTML = ""
+            let add = `<center><h1 style="font-size: 100px;">Congrats on beating the MoreMath program!</h1>
+            <br>
+            <button onclick="redo()" class="btn btn-primary" style="font-size: 50px;">Restart the program.</button>
+            <br>
+            <br>
+            <a href="/delete"><button id="redo" class="btn btn-primary" style="font-size: 50px;">Delete Account.</button></a>
+            </center>`
+            $('#body').append(add)
+        }, 500)
+    }
+
+    function redo() {
+        $.ajax({
+            url: '/math/restart',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: {
+                'Authorization': localStorage.getItem('user' + user + '')
+            }, success: function (data) {
+                window.location.href = "/"
+            }, error: function (error) {
+            }
+        })
+    }
+</script>
